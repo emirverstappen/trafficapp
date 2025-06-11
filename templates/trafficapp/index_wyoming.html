@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trafik Yoğunluk Analizi - Wyoming{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --success-color: #2ecc71;
+        --warning-color: #f1c40f;
+        --danger-color: #e74c3c;
+        --light-bg: #f8f9fa;
+        --dark-text: #2c3e50;
+    }
+    body { background-color: #f5f6fa; }
+    .container-fluid { padding: 20px; }
+    .card { border: none; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s; margin-bottom: 20px; background: white; }
+    .card:hover { transform: translateY(-5px); }
+    .card-header { background: var(--primary-color); color: white; border-radius: 15px 15px 0 0 !important; padding: 15px 20px; font-weight: 600; }
+    .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+    .video-container {
+        position: relative;
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #000;
+        min-height: 400px; /* Adjust height as needed */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .video-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* or 'cover' depending on desired scaling */
+    }
+    .stats-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px; }
+    .stat-box { background: var(--light-bg); padding: 8px; border-radius: 10px; text-align: center; transition: all 0.3s; }
+    .stat-box:hover { transform: scale(1.02); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .stat-box h3 { font-size: 1.5rem; margin: 0; color: var(--primary-color); font-weight: 700; }
+    .stat-box p { margin: 2px 0 0; color: #666; font-size: 0.8rem; }
+    .congestion-box { background: var(--light-bg); padding: 8px; border-radius: 10px; text-align: center; margin-top: 15px; }
+    .congestion-box h3 { font-size: 1.2rem; margin: 0; color: var(--primary-color); }
+    .congestion-box p { margin: 2px 0 0; color: #666; font-size: 0.8rem; }
+    .map-container { height: 100%; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .congestion-Sakin { color: var(--success-color); }
+    .congestion-Normal { color: var(--secondary-color); }
+    .congestion-Yoğun { color: var(--warning-color); }
+    .congestion-Çok-Yoğun { color: var(--danger-color); }
+    @media (max-width: 768px) { .stats-container { grid-template-columns: 1fr; } .video-container img { height: 200px; } }
+    .location-btn { 
+        background-color: #00BFA6;
+        padding: 8px 20px;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        border-radius: 8px;
+        border: 2px dashed #00BFA6;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+        transition: .4s;
+        font-size: 0.9rem;
+    }
+
+    .location-btn:hover {
+        transition: .4s;
+        border: 2px dashed #00BFA6;
+        background-color: #fff;
+        color: #00BFA6;
+    }
+
+    .location-btn:active {
+        background-color: #87dbd0;
+    }
+
+    .location-btn.active {
+        background-color: #00BFA6;
+        color: #fff;
+        border-color: #00BFA6;
+    }
+
+    .location-btn:not(.active) {
+        background-color: #fff;
+        color: #00BFA6;
+        border-color: #00BFA6;
+    }
+
+    .spinner-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 10;
+        transition: opacity 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .spinner-container.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .spinner {
+        --size: 30px;
+        --first-block-clr: #133355;
+        --second-block-clr: #05f86a;
+        --clr: #111;
+        width: 100px;
+        height: 100px;
+        position: relative;
+    }
+
+    .spinner::after, .spinner::before {
+        box-sizing: border-box;
+        position: absolute;
+        content: "";
+        width: var(--size);
+        height: var(--size);
+        top: 50%;
+        animation: up 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+        left: 50%;
+        background: var(--first-block-clr);
+    }
+
+    .spinner::after {
+        background: var(--second-block-clr);
+        top: calc(50% - var(--size));
+        left: calc(50% - var(--size));
+        animation: down 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+    }
+
+    @keyframes down {
+        0%, 100% {
+            transform: none;
+        }
+        25% {
+            transform: translateX(100%);
+        }
+        50% {
+            transform: translateX(100%) translateY(100%);
+        }
+        75% {
+            transform: translateY(100%);
+        }
+    }
+
+    @keyframes up {
+        0%, 100% {
+            transform: none;
+        }
+        25% {
+            transform: translateX(-100%);
+        }
+        50% {
+            transform: translateX(-100%) translateY(-100%);
+        }
+        75% {
+            transform: translateY(-100%);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-map-marker-alt"></i> Konum Seçimi
+                        </div>
+                        <div class="card-body">
+                            <div class="btn-group w-100" role="group">
+                                <button type="button" class="btn btn-outline-primary location-btn" onclick="location.href='{% url 'chicago' %}'">Chicago</button>
+                                <button type="button" class="btn btn-outline-primary location-btn" onclick="location.href='{% url 'london' %}'">London</button>
+                                <button type="button" class="btn btn-outline-primary location-btn" onclick="location.href='{% url 'michigan' %}'">Michigan</button>
+                                <button type="button" class="btn btn-primary location-btn active" onclick="location.href='{% url 'wyoming' %}'">Wyoming</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-camera"></i> İşlenmiş Görüntü
+                        </div>
+                        <div class="card-body" style="position: relative;">
+                            <div class="spinner-container" id="video-spinner">
+                                <div class="spinner"></div>
+                            </div>
+                            <div class="video-container">
+                                <img src="{% url 'video_feed' %}?location_id=1" alt="Processed Video Stream" id="video-stream">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i> İstatistikler
+                </div>
+                <div class="card-body">
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <h3 id="vehicle-count">0</h3>
+                            <p>Araç</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3 id="person-count">0</h3>
+                            <p>Yaya</p>
+                        </div>
+                    </div>
+                    <div class="congestion-box">
+                        <h3 id="congestion-level" class="congestion-Normal">Normal</h3>
+                        <p>Trafik Yoğunluğu</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-map-marker-alt"></i> Harita
+                </div>
+                <div class="card-body">
+                    <div id="map" class="map-container">
+                        {{ map_html|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+let currentLocation = 1;
+const videoStreamImg = document.getElementById('video-stream');
+const videoSpinner = document.getElementById('video-spinner');
+
+function showSpinner() {
+    videoSpinner.classList.add('show');
+}
+
+function hideSpinner() {
+    videoSpinner.classList.remove('show');
+}
+
+// Show spinner on initial load
+showSpinner();
+
+// Hide spinner when image loads
+videoStreamImg.addEventListener('load', hideSpinner);
+videoStreamImg.addEventListener('error', hideSpinner); // Also hide on error
+
+function updateStats() {
+    fetch('/update_map/?location_id=' + currentLocation)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('vehicle-count').textContent = data.vehicle_count;
+            document.getElementById('person-count').textContent = data.person_count;
+            
+            const congestionLevelElement = document.getElementById('congestion-level');
+            
+            // Yoğunluk seviyesi anahtarını Türkçe karşılığına çevir
+            let displayCongestionLevel;
+            switch (data.congestion_level) {
+                case 'calm':
+                    displayCongestionLevel = 'Sakin';
+                    break;
+                case 'normal':
+                    displayCongestionLevel = 'Normal';
+                    break;
+                case 'busy':
+                    displayCongestionLevel = 'Yoğun';
+                    break;
+                case 'very_busy':
+                    displayCongestionLevel = 'Çok Yoğun';
+                    break;
+                default:
+                    displayCongestionLevel = data.congestion_level; // Varsayılan olarak gelen değeri kullan
+            }
+            
+            congestionLevelElement.textContent = displayCongestionLevel;
+            
+            // CSS class'ını anahtara göre ayarla (stiller hala calm, normal vb. kullanıyor)
+            congestionLevelElement.className = `congestion-${data.congestion_level}`;
+            
+            document.getElementById('map').innerHTML = data.map_html;
+        });
+}
+
+// Her 2 saniyede bir güncelle
+setInterval(updateStats, 2000);
+</script>
+{% endblock %}
+{% endblock %} 

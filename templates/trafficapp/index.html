@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trafik Yoğunluk Analizi{% endblock %}
+
+{% block extra_css %}
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f6fa;
+    }
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .container-fluid {
+        flex: 1 0 auto;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .locations-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        max-width: 600px;
+        margin: 100px auto 0 auto;
+    }
+    .location-card {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 80px;
+        height: 80px;
+        border-radius: 12px;
+        background: #00BFA6;
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        text-decoration: none;
+        border: none;
+        outline: none;
+    }
+    .location-card:hover {
+        background: #009e8a;
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+    @media (max-width: 768px) {
+        .locations-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 60px;
+        }
+        .location-card {
+            min-height: 60px;
+            height: 60px;
+            font-size: 1rem;
+        }
+    }
+    /* Header ve footer'ı yapıştır */
+    .navbar {
+        margin-bottom: 0 !important;
+        border-radius: 0 !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        position: fixed;
+        z-index: 1000;
+    }
+    .footer-sticky {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin-bottom: 0;
+        border-radius: 0 !important;
+        z-index: 1000;
+    }
+    .container-fluid {
+        margin-top: 80px;
+        margin-bottom: 60px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="locations-grid">
+        <a href="{% url 'wyoming' %}" class="location-card">Wyoming</a>
+        <a href="{% url 'michigan' %}" class="location-card">Michigan</a>
+        <a href="{% url 'chicago' %}" class="location-card">Chicago</a>
+        <a href="{% url 'london' %}" class="location-card">London</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Footer'ı sticky yapmak için base.html'de footer'a class eklenmeli: .footer-sticky
+</script>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block extra_css %}
+<style>
+.wrapper {
+  --input-focus: #2d8cf0;
+  --font-color: #323232;
+  --font-color-sub: #666;
+  --bg-color: #fff;
+  --bg-color-alt: #666; /* This variable seems unused in the provided CSS, but kept for completeness */
+  --main-color: #323232;
+  display: flex; /* Added display flex to center the card */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  min-height: 80vh; /* Use min-height to center in viewport */
+}
+
+/* card */ 
+.flip-card__inner {
+  width: 300px;
+  height: 350px;
+  position: relative; /* Keep relative for positioning children */
+  background-color: transparent; /* Keep transparent */
+  perspective: 1000px; /* Keep perspective */
+  text-align: center; /* Center text */
+  /* transform: none; Remove transform as there's no flip */
+  transform-style: preserve-3d; /* Keep for 3D context if needed, though flip is removed */
+}
+
+.flip-card__front {
+  padding: 20px;
+  position: absolute; /* Keep absolute */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  -webkit-backface-visibility: hidden; /* Keep for consistency */
+  backface-visibility: hidden; /* Keep for consistency */
+  background: lightgrey; /* Use provided background */
+  gap: 20px; /* Keep gap */
+  border-radius: 5px; /* Keep border-radius */
+  border: 2px solid var(--main-color); /* Keep border */
+  box-shadow: 4px 4px var(--main-color); /* Keep box-shadow */
+  width: 100%; /* Set width to fill container */
+  height: 100%; /* Set height to fill container */
+}
+
+.flip-card__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.title {
+  margin: 20px 0; /* Use shorthand for margin */
+  font-size: 25px;
+  font-weight: 900;
+  text-align: center;
+  color: var(--main-color);
+}
+
+.flip-card__input {
+  width: 250px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color); /* Use provided box-shadow */
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--font-color);
+  padding: 5px 10px;
+  outline: none;
+}
+
+.flip-card__input::placeholder {
+  color: var(--font-color-sub);
+  opacity: 0.8;
+}
+
+.flip-card__input:focus {
+  border: 2px solid var(--input-focus);
+}
+
+.flip-card__btn:active {
+  box-shadow: 0px 0px var(--main-color); /* Correct active box-shadow */
+  transform: translate(3px, 3px); /* Correct active transform */
+}
+
+.flip-card__btn {
+  margin: 20px 0; /* Use shorthand for margin */
+  width: 120px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color); /* Use provided box-shadow */
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--font-color);
+  cursor: pointer;
+}
+
+/* Basic styling for Django messages */
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+    <div class="flip-card__inner">
+        <div class="flip-card__front">
+            <div class="title">Log in</div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form class="flip-card__form" method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input class="flip-card__input" name="username" placeholder="Username" type="text" required>
+                <input class="flip-card__input" name="password" placeholder="Password" type="password" required>
+                <button class="flip-card__btn" type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">Trafik Yoğunluk Analizi</a>
+    </div>
+</nav>
+{% endblock %} 

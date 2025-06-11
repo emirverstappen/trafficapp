@@ -1,0 +1,117 @@
+/* Main Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Card Styles */
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: none;
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+/* Stats Cards */
+.stats-card {
+    transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+#vehicle-card {
+    border-left-color: #dc3545;
+}
+
+#person-card {
+    border-left-color: #28a745;
+}
+
+/* Navbar */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Footer */
+footer {
+    margin-top: 3rem;
+    padding: 1rem 0;
+    background-color: #343a40;
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    .video-container {
+        padding-bottom: 75%; /* Adjust aspect ratio for mobile */
+    }
+    
+    .map-container {
+        height: 300px;
+    }
+}
+
+/* Custom styles for Traffic Analysis App */
+.video-container {
+    background-color: #000;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+}
+
+.video-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.map-container {
+    border-radius: 5px;
+    overflow: hidden;
+    height: 400px;
+}
+
+.congestion-calm {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.congestion-normal {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.congestion-busy {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.congestion-very-busy {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.form-select {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 0.5rem;
+}
+
+.form-select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}

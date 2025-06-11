@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,700');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Raleway', sans-serif;
+  overflow: hidden;
+}
+
+.login-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* Background layers */
+.top::before,
+.top::after,
+.bottom::before,
+.bottom::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 200vmax;
+  height: 200vmax;
+  top: 50%;
+  left: 50%;
+  margin-top: -100vmax;
+  transform-origin: 0 50%;
+  transition: all 0.5s cubic-bezier(0.445, 0.05, 0, 1);
+  z-index: 10;
+  opacity: 0.65;
+  transition-delay: 0.2s;
+}
+
+.top::before {
+  transform: rotate(45deg);
+  background: #e46569;
+}
+.top::after {
+  transform: rotate(135deg);
+  background: #ecaf81;
+}
+.bottom::before {
+  transform: rotate(-45deg);
+  background: #60b8d4;
+}
+.bottom::after {
+  transform: rotate(-135deg);
+  background: #3745b5;
+}
+
+/* Centered form */
+.center {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: 50%;
+  left: 50%;
+  margin-left: -200px;
+  margin-top: -200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.445, 0.05, 0, 1);
+  color: #333;
+  z-index: 20;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.center h2 {
+  text-align: center;
+  width: 100%;
+}
+
+.center input {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.center button[type="submit"] {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0 5px 0;
+  border-radius: 5px;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.center button[type="submit"]:hover {
+  background-color: #2980b9;
+}
+
+/* Animation triggers */
+.login-container.animate .top::before,
+.login-container.animate .top::after,
+.login-container.animate .bottom::before,
+.login-container.animate .bottom::after {
+  margin-left: 200px;
+  transform-origin: -200px 50%;
+  transition-delay: 0s;
+}
+
+.login-container.animate .center {
+  opacity: 1;
+  transition-delay: 0.2s;
+}
+
+/* Message styling */
+.alert {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
