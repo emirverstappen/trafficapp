@@ -27,7 +27,7 @@ Bu uygulama, gerçek zamanlı video analizi kullanarak trafik yoğunluğunu anal
 
 1. Projeyi klonlayın:
 ```bash
-git clone https://github.com/yourusername/traffic-analysis-app.git
+git clone https://github.com/emirverstappen/trafficapp.git
 cd traffic-analysis-app
 ```
 
